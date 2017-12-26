@@ -1,5 +1,11 @@
+/* orange: #4484CE
+   blue: #4484CE
+   dark blue: #1A2930
+   coral: #FF533D*/
+
+
 body {
-  padding: 20px;
+  padding: 15px;
   max-width: 700px;
   width: 80%;
   margin: 20px auto;
@@ -58,7 +64,7 @@ h1 {
 }
 
 a {
-  color: #FF584A;
+  color: #FF533D;
   text-decoration: none;
 }
 
@@ -79,26 +85,50 @@ hr {
 .PostTitle {
   margin-top: 90px;
   margin-bottom: 15px;
-  color: #FF584A;
+  color: #FF533D;
   font-size: 45px;
 }
 
 .PostDate {
   color: #2B2826;
   margin-top: 0px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 300;
 }
 
 .ListLink:hover {
   text-decoration: none;
-  border-bottom: 3px solid #FF584A;
+  border-bottom: 3px solid #FF533D;
 }
 
-.PostLength {
+.PostPeek {
   color: #2B2826;
   margin-top: 20px;
   font-size: 20px;
   font-weight: 400;
-  margin-bottom:
+}
+
+.FooterHR {
+  border: 0;
+  width: 100%;
+  color: #2B2826;
+  background-color: #2B2826;
+  height: 2px;
+  margin-top: 70px;
+  margin-bottom: 20px;
+}
+
+.FooterText {
+  margin-top: 90px;
+  margin-bottom: 15px;
+  color: #2B2826;
+  font-weight: 400;
+  font-size: 20px;
+}
+
+.About {
+  color: #2B2826;
+  margin-top: 130px;
+  font-size: 20px;
+  font-weight: 400;
 }
