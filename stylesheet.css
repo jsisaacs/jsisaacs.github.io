@@ -1,5 +1,4 @@
 body {
-  /* border: 5px solid red; */
   padding: 20px;
   max-width: 700px;
   width: 80%;
@@ -7,50 +6,99 @@ body {
   font-family: Source Sans Pro;
 }
 
+.NavbarList {
+  list-style-type: none;
+  float: right;
+  max-width: 700px;
+  margin-top: -10px;
+}
+
+.ListItem {
+  display: inline;
+  margin: 10px;
+}
+
+.ListLink {
+  color: #2B2826;
+  font-size: 20px;
+}
+
 h1 {
-  color: #2c3e50;
+  color: #000000;
+  /* letter-spacing: 0.1rem; */
+  font-size: 55px;
+  font-weight: 700;
+  margin-bottom: 0px;
+  margin-top: 80px;
 }
 
 #Description {
+  color: #2B2826;
+  font-size: 20px;
+  font-weight:300;
+  margin-top: 18px;
+  margin-bottom: 20px;
+}
 
+#GitHubIcon {
+  height: 40px;
+  width: 40px;
+}
+
+#LinkedInIcon {
+  margin-left: 10px;
+  height: 40px;
+  width: 40px;
 }
 
 #Email {
-
+  color: #2B2826;
+  font-size: 18px;
+  font-weight:300;
 }
 
 a {
-
+  color: #FF584A;
+  text-decoration: none;
 }
 
 hr {
   border: 0;
-  height: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-  margin-top: 20px;
+  width: 10%;
+  color: #2B2826;
+  background-color: #2B2826;
+  height: 2px;
+  margin-top: 28px;
+  float: left;
 }
 
 .Post {
 
 }
 
-.PostDate {
-  color: #3498db;
-  text-transform: uppercase;
-  letter-spacing: 0.125rem;
-}
-
 .PostTitle {
-  font-size: 2.0rem;
-  color: #2c3e50;
-  font-weight: 900;
+  margin-top: 90px;
+  margin-bottom: 15px;
+  color: #FF584A;
+  font-size: 45px;
 }
 
-.PostExcerpt {
-  color: #2c3e50;
+.PostDate {
+  color: #2B2826;
+  margin-top: 0px;
+  font-size: 16px;
+  font-weight: 300;
 }
 
-.Footer {
+.ListLink:hover {
+  text-decoration: none;
+  border-bottom: 3px solid #FF584A;
+}
 
+.PostLength {
+  color: #2B2826;
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom:
 }
