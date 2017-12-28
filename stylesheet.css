@@ -1,12 +1,16 @@
 /* add underlines to curent nav item */
 
-
 body {
   padding: 15px;
   max-width: 700px;
   width: 80%;
   margin: 20px auto;
   font-family: Source Sans Pro;
+  font-weight: 200;
+}
+
+.Navbar {
+  /* margin-bottom: 100px; */
 }
 
 .NavbarList {
@@ -29,10 +33,11 @@ body {
 h1 {
   color: #2B2826;
   /* letter-spacing: 0.1rem; */
-  font-size: 55px;
-  font-weight: 700;
+  font-size: 50px;
+  font-weight: 900;
   margin-bottom: 0px;
   margin-top: 80px;
+  font-family: 'Playfair Display', serif;
 }
 
 #Description {
@@ -61,7 +66,7 @@ h1 {
 }
 
 a {
-  color: #FF533D;
+  color: #2B2826;
   text-decoration: none;
 }
 
@@ -82,27 +87,29 @@ hr {
 .PostTitle {
   margin-top: 90px;
   margin-bottom: 15px;
-  color: #FF533D;
-  font-size: 45px;
+  color: #2B2826;
+  font-size: 35px;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
 }
 
 .PostDate {
   color: #2B2826;
   margin-top: 0px;
-  font-size: 18px;
-  font-weight: 300;
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .ListLink:hover {
   text-decoration: none;
-  border-bottom: 3px solid #FF533D;
+  border-bottom: 3px solid #2B2826;
 }
 
 .PostPeek {
   color: #2B2826;
   margin-top: 20px;
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 200;
 }
 
 .FooterHR {
@@ -119,7 +126,7 @@ hr {
   margin-top: 90px;
   margin-bottom: 15px;
   color: #2B2826;
-  font-weight: 400;
+  font-weight: 200;
   font-size: 20px;
 }
 
@@ -127,7 +134,7 @@ hr {
   color: #2B2826;
   margin-top: 130px;
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 200;
 }
 
 .ArtileTLDR {
@@ -157,7 +164,9 @@ hr {
   margin-top: 75px;
   margin-bottom: 0px;
   font-weight: 700;
-  font-size: 40px;
+  font-size: 35px;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
 }
 
 .ArticleText {
@@ -167,7 +176,7 @@ hr {
 }
 
 .ArticleQuote {
-  border-left: 7.5px solid #FF533D;
+  border-left: 7.5px solid #2B2826;
   padding-left: 30px;
   color: #2B2826;
   font-size: 40px;
