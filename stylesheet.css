@@ -174,3 +174,7 @@ hr {
   font-style: italic;
   margin-bottom: 25px;
 }
+
+pre > code {
+  font-size: 18px;
+}
