@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width" content="initial-scale=1">
+    <title>Joshua Isaacson - Creating a Quantitative Trading Strategy Based on Sentiment Data</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700900" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <link rel="stylesheet" href="styles/github.css">
+    <script src="highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </head>
+  <body>
+    <div class="Navbar">
+      <ul class="NavbarList">
+        <li class="ListItem"><a class="ListLink" href="index.html">Home</a></li>
+        <li class="ListItem"><a class="ListLink" href="Assets/Resume.pdf">Resume</a></li>
+        <li class="ListItem"><a class="ListLink" href="projects.html">Projects</a></li>
+        <li class="ListItem"><a class="ListLink" href="about.html">About</a></li>
+      </ul>
+    </div>
+    <div class="Article">
+      <h1>Creating a Quantitative Trading Strategy Based on Sentiment Data</h1>
+      <p class="ArtileTLDR"><b>TL;DR</b> - Tutorial covering the research workflow of a quantitative trading project.</p>
+      <p class="ArticleDate">December 30, 2017</p>
+      <hr class="ArticleHR">
+      <p class="ArticleText">
+      Over this past semester, I developed a quantitative trading strategy that uses
+      sentiment data from news sites and social media. These notes will cover my
+      research workflow for strategy identification and backtesting. I chose to use
+      the <a class="ArticleLink" href="https://www.quantopian.com">Quantopian</a> platform because it gives access to rich datasets, an easy to
+      use IDE, and a backtesting environment that lets you take code written in research
+      notebooks and directly use it in your trading algorithms.
+      </p>
+      <img src="Assets/quant_workflow.png" alt="Quant Workflow">
+      <p class="ImageText">Strategy Identification and Backtesting Workflow</p>
+      <h2 class="ArticleH2">Data</h2>
+      <p class="ArticleText">
+      I used the <a class="ArticleLink" href="https://www.quantopian.com/data/sentdex/sentiment">Sentdex</a>
+      dataset, which "assesses the sentiment of companies by pulling from
+      over 20 sources such as Wall Street Journal, CNBC, Forbes, Business Insider, and Yahoo Finance."
+      The dataset's primary factor is <b>sentiment signal</b>, which is a standalone sentiment score
+      from -3 to 6 for equities. I also used Quantopian's US Equity Pricing dataset which can be filtered
+      to your strategy's specifications.
+      </p>
+      <p class="ArticleText">
+      The strategies will perform differently depending on the chosen equity
+      universe. I chose to use the <a class="ArticleLink" href="https://www.quantopian.com/posts/the-q500us-and-q1500us">Q1500US</a> as my base, which consists of 1500 stocks
+      that are suitable for trading. It throws out hard-to-trade equities like non-primary
+      shares, stocks, with missing data, etc. Also, only the top 1500 stocks based on 200-day Average
+      Dollar Volume (measure of liquidity) are kept.
+      </p>
+      <p class="ArticleText">
+      To take the data from the Sentdex and US Equity Pricing datasets, I used <a class="ArticleLink" href="https://www.quantopian.com/tutorials/pipeline">Pipeline</a>,
+      Quantopian's way of dynamically selecting equities from the base universe to be
+      used in the trading algorithm. It is optimal to use it in the research notebooks
+      as well as in the actual trading algorithm. Just in case, an average daily dollar volume traded filter is applied
+      to weed out low liquidity stocks in the Q1500US:
+      </p>
+      <pre>
+      <code>
+      class AvgDailyDollarVolumeTraded(CustomFactor):
+          window_length = 20
+          inputs = [USEquityPricing.close, USEquityPricing.volume]
+          def compute(self, today, assets, out, close_price, volume):
+              out[:] = np.mean(close_price * volume, axis=0)
+      </code>
+      </pre>
+      <h2 class="ArticleH2">Alpha Discovery</h2>
+      <p class="ArticleText">
+      After the Pipeline is set up, the next step in the research workflow is
+      alpha discovery. The goal in this stage is to evaluate alpha factors that
+      can potentially be used in the trading algorithm.
+      </p>
+      <p class="ArticleQuote">Alpha factors express a predictive relationship between
+      some given set of information and future returns.</p>
+      <p class="ArticleText">
+      I chose 8 factors to test:
+      bullish intensity and bearish intensity from the <a class="ArticleLink" href="https://www.quantopian.com/data/psychsignal/aggregated_twitter_withretweets_stocktwits">PsychSignal</a> dataset, sentiment sigal,
+      and a simple moving average of the sentiment signal over window lengths of 3, 10, 20, 30,
+      50, and 80, which were taken from the Sentdex dataset. I chose to test the simple moving average
+      of sentiment signal because I think sentiment is best used as a lagging indicator of stock prices.
+      I set them all up in the Pipeline and used Alphalens, a Python package used
+      for performance analysis of alpha factors.
+      </p>
+      <p class="ArticleText">
+      The simple moving average of sentiment signal over 3 days (average sentiment signal) had the best performance
+      out of the 8 alpha factors tested. This is how the custom factor was created:
+      </p>
+      <pre>
+      <code>
+      class AvgSentiment(CustomFactor):
+          def compute(self, today, assets, out, impact):
+              np.mean(impact, axis=0, out=out)
+      </code>
+      </pre>
+      <p class="ArticleText">
+      The Pipeline used with NaN values interpolated:
+      </p>
+      <pre>
+      <code>
+      window_length =3
+      pipe = Pipeline()
+      dollar_volume = AvgDailyDollarVolumeTraded()
+      pipe.add(Sector(), 'Sector')
+
+      # Add our AvgSentiment factor to the pipeline using a 3 day moving average
+      pipe.add(AvgSentiment(inputs=[sentiment_free.sentiment_signal], window_length=window_length), "avg_sentiment")
+
+      # Screen out low liquidity securities.
+      pipe.set_screen((dollar_volume > 10**7))
+      start_timer = time()
+      results = run_pipeline(pipe, '2015-01-01', '2016-01-01')
+      end_timer = time()
+
+      # Times how long the pipeline takes to run.
+      print("Time to run pipeline %.2f secs" % (end_timer - start_timer))
+      adjusted_dataset = results.interpolate()
+      </code>
+      </pre>
+      <img src="Assets/pipeline.png" alt="Pipeline">
+      <p class="ImageText">Pipeline Representation</p>
+      <p class="ArticleText">
+      To go from Pipeline to performance analysis through Alphalens, I
+      needed to extract the list of unique equities.
+      </p>
+      <pre>
+      <code>
+      #Asset list extraction.
+      avgsent_factor = adjusted_dataset["avg_sentiment"]
+      sectors = adjusted_dataset['Sector']
+      asset_list = adjusted_dataset.index.levels[1].unique()
+      prices = get_pricing(asset_list, start_date='2015-01-01', end_date='2016-01-01', fields='price')
+
+      #Alphalens tearsheet     
+      avgsent_factor_data = al.utils.get_clean_factor_and_forward_returns(
+                                                            factor=avgsent_factor,
+                                                            prices=prices,
+                                                            groupby=sectors,
+                                                            quantiles=2,
+                                                            groupby_labels=MORNINGSTAR_SECTOR_CODES,
+                                                            periods=(1, 5, 10))
+
+      avgsent_factor_data.head()
+      al.tears.create_full_tear_sheet(avgsent_factor_data)
+      </code>
+      </pre>
+    </div>
+    <hr class="FooterHR">
+    <p class="FooterText">© 2017&nbsp;<a class="FooterLink" href="about.html">Joshua Isaacson</a></p>
+  </body>
+</html>
