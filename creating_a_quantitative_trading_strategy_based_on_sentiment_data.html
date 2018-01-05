@@ -22,16 +22,16 @@
     </div>
     <div class="Article">
       <h1>Creating a Quantitative Trading Strategy Based on Sentiment Data</h1>
-      <p class="ArtileTLDR"><b>TL;DR</b> - Tutorial covering the research workflow of a quantitative trading project.</p>
+      <p class="ArtileTLDR"><b>TL;DR</b> - The research workflow of a quantitative trading project.</p>
       <p class="ArticleDate">December 30, 2017</p>
       <hr class="ArticleHR">
       <p class="ArticleText">
-      Over this past semester, I developed a quantitative trading strategy that uses
-      sentiment data from news sites and social media. These notes will cover my
+      Over this past semester, I developed a quantitative trading strategy that used
+      sentiment data from news sites and social media. These notes cover my
       research workflow for strategy identification and backtesting. I chose to use
-      the <a class="ArticleLink" href="https://www.quantopian.com">Quantopian</a> platform because it gives access to rich datasets, an easy to
-      use IDE, and a backtesting environment that lets you take code written in research
-      notebooks and directly use it in your trading algorithms.
+      the <a class="ArticleLink" href="https://www.quantopian.com">Quantopian</a> platform because it gave access to rich datasets, an easy to
+      use IDE, and a backtesting environment that allowed me to take code written in my research
+      notebooks and directly use it in the trading algorithm.
       </p>
       <img src="Assets/quant_workflow.png" alt="Quant Workflow">
       <p class="ImageText">Strategy Identification and Backtesting Workflow</p>
@@ -40,23 +40,26 @@
       I used the <a class="ArticleLink" href="https://www.quantopian.com/data/sentdex/sentiment">Sentdex</a>
       dataset, which "assesses the sentiment of companies by pulling from
       over 20 sources such as Wall Street Journal, CNBC, Forbes, Business Insider, and Yahoo Finance."
-      The dataset's primary factor is <b>sentiment signal</b>, which is a standalone sentiment score
+      The dataset's primary factor was <b>sentiment signal</b>, which is a standalone sentiment score
       from -3 to 6 for equities. I also used Quantopian's US Equity Pricing dataset which can be filtered
       to your strategy's specifications.
       </p>
+      <p class="ArticleQuote">
+      "Sentiment analysis refers to the use of natural language processing, text analysis, computational linguistics, and
+      biometrics to systematically identify, extract, quantify, and study affective states and subjective information."
+      </p>
       <p class="ArticleText">
-      The strategies will perform differently depending on the chosen equity
-      universe. I chose to use the <a class="ArticleLink" href="https://www.quantopian.com/posts/the-q500us-and-q1500us">Q1500US</a> as my base, which consists of 1500 stocks
+      The trading strategy's performance is reliant upon the chosen equity
+      universe. I chose to use the <a class="ArticleLink" href="https://www.quantopian.com/posts/the-q500us-and-q1500us">Q1500US</a> as my base, which is made up of 1500 stocks
       that are suitable for trading. It throws out hard-to-trade equities like non-primary
-      shares, stocks, with missing data, etc. Also, only the top 1500 stocks based on 200-day Average
-      Dollar Volume (measure of liquidity) are kept.
+      shares, stocks, with missing data, etc. Only the top 1500 stocks based on 200-day Average
+      Dollar Volume (which is a measure of liquidity, aka h) are kept.
       </p>
       <p class="ArticleText">
       To take the data from the Sentdex and US Equity Pricing datasets, I used <a class="ArticleLink" href="https://www.quantopian.com/tutorials/pipeline">Pipeline</a>,
-      Quantopian's way of dynamically selecting equities from the base universe to be
-      used in the trading algorithm. It is optimal to use it in the research notebooks
-      as well as in the actual trading algorithm. Just in case, an average daily dollar volume traded filter is applied
-      to weed out low liquidity stocks in the Q1500US:
+      Quantopian's trading infrastructure implementation to dynamically select equities from the base universe.
+      Optimally, it's meant to be used in both the research notebooks as well as the trading algorithm. To filter out low liquidity
+      stocks in  the Q1500US, an average daily dollar volume traded filter was applied.
       </p>
       <pre>
       <code>
@@ -69,9 +72,8 @@
       </pre>
       <h2 class="ArticleH2">Alpha Discovery</h2>
       <p class="ArticleText">
-      After the Pipeline is set up, the next step in the research workflow is
-      alpha discovery. The goal in this stage is to evaluate alpha factors that
-      can potentially be used in the trading algorithm.
+      After the Pipeline was set up, the goal of the next stage, alpha discovery, was to evaluate a range of alpha factors
+      and their respective predictive abilities for stock prices.
       </p>
       <p class="ArticleQuote">"Alpha factors express a predictive relationship between
       some given set of information and future returns."</p>
@@ -81,14 +83,15 @@
       and a simple moving average of the sentiment signal over window lengths of 3, 10, 20, 30,
       50, and 80, which were taken from the Sentdex dataset. A moving average is commonly used
       with financial data "to smooth out short-term fluctuations and highlight longer-term trends or cycles."
-      My hypothesis is that after an event occurs that triggers some change in equity price,
+      My hypothesis was that after an event occurs that triggers some change in equity price,
       overall sentiment, in the form of news articles and social media posts lag behind shortly after.
-      The optimal window length is unknown. I set them all up in the Pipeline and used Alphalens, a Python package used
-      for performance analysis of alpha factors.
+      I configured each factor in Pipeline and used Alphalens, a Python package used
+      for performance analysis of alpha factors, to generate a tearsheet of each which contains relavent statistics
+      and plots.
       </p>
       <p class="ArticleText">
       The simple moving average of sentiment signal over 3 days (average sentiment signal) had the best performance
-      out of the 8 alpha factors tested. This is how the custom factor was created:
+      out of the 8 alpha factors tested. AvgSentiment implementation:
       </p>
       <pre>
       <code>
@@ -98,7 +101,7 @@
       </code>
       </pre>
       <p class="ArticleText">
-      <var>AvgSentiment&nbsp;</var> takes the input sentiment_signal and averages it over a particular
+      <var>AvgSentiment&nbsp;</var> used the the input sentiment_signal and averaged it over a particular
       window length.
       </p>
       <pre>
@@ -123,10 +126,7 @@
       </code>
       </pre>
       <p class="ArticleText">
-      If you wanted to test different window lengths for your moving average, just replace the value of
-      <var>window_length</var>. My pipeline extracts data from January 1, 2015 to January 1, 2016, but
-      that can easily changed. Just note that financial models can become less reliable the longer the timeframe
-      covered, so keep that in mind. Looking at <var>results</var>,
+      Looking at <var>results</var>,
       <pre>
       <code>
       results.head()
@@ -134,15 +134,14 @@
       </pre>
       </p>
       <p class="ArticleText">
-      you'll notice that
-      many of the equities are listed multiple times and also that there are many NaN values. The first problem takes
-      a little more work, but to deal with NaN values, <a class="ArticleLink" href="https://pandas.pydata.org">Pandas</a> has <var>interpolate()</var>, which constructs new data
-      points within the range of the existing ones. Graphically, our Pipeline can be represented as the following:
+      many of the equities were listed multiple times and also there were many NaN values.
+      To adjust for NaN values, <a class="ArticleLink" href="https://pandas.pydata.org">Pandas'</a> <var>interpolate()</var> function was used, which constructed new data
+      points within the range of the existing ones by taking the mean of the data above and below it when ordered. Graphically, the Pipeline looked like the following:
       </p>
       <img src="Assets/pipeline.png" alt="Pipeline">
       <p class="ImageText">Pipeline Representation</p>
       <p class="ArticleText">
-      This is how I dealt with the first problem of repeated equities.
+      To deal with repeated equities in <var>results</var>:
       </p>
       <pre>
       <code>
@@ -154,10 +153,10 @@
       </code>
       </pre>
       <p class="ArticleText">
-      The <var>asset_list</var> contains all unique equities from the adjusted dataset. The
-      <var>avgsent_factor</var> and <var>sectors</var> are their respective columns, and
-      <var>prices</var> is a Pandas DataFrame of the prices for the equities in <var>asset_list</var>.
-      Here is how you generate a tearsheet of relavent statistics for your alpha factor through the Alphalens package:
+      The <var>asset_list</var> contained all unique equities from the adjusted dataset. The
+      <var>avgsent_factor</var> and <var>sectors</var> were their respective columns, and
+      <var>prices</var> was a Pandas DataFrame of the prices for the equities in <var>asset_list</var>.
+      Here is how the tearsheet of relavent statistics for your alpha factor was generated through the Alphalens package:
       </p>
       <pre>
       <code>
@@ -173,19 +172,15 @@
       </code>
       </pre>
       <p class="ArticleText">
-      Two graphs that are generated really stand out that give us some info about our average sentiment
-      factor: Mean Return by Factor Quantile and Period Wise Return by Factor Quantile.
       </p>
       <img src="Assets/mean_returns.png" alt="Mean Returns">
       <p class="ImageText">Mean Returns by Factor Quantile</p>
       <p class="ArticleText">
-      The plot describes the optimal window length for which the alpha factor,
-      average sentiment, is most predictive. It breaks down by 1, 5, and 10 days.
-      The visualization shows that average sentiment operates best as a short-term
-      predictor, and that 1 and 5 days are very similar, with a steep drop off by 10
-      days. Quantile 1 and 2 represent the short and long positions, respectively. When I
-      get to the actual strategy itself, I will talk more about the short and long positions,
-      but for now just know that the best factors have the largest absolute value possible. This graph
+      The plot above described the optimal window length for which the alpha factor,
+      average sentiment, was most predictive. It was broken down by 1, 5, and 10 days.
+      The visualization showed that average sentiment operated best as a short-term
+      predictor, and that 1 and 5 days were very similar, with a steep drop off by 10
+      days. Quantile 1 and 2 represented the short and long positions, respectively. This graph
       confirms that a window length of 3 days works well to predict stock price because it fits
       nicely between 1 and 5 days on the plot and it has the largest absolute value for both the short
       and long quantiles.
@@ -198,33 +193,30 @@
       </p>
       <h2 class="ArticleH2">Strategy</h2>
       <p class="ArticleText">
-      I worked with a <a class="ArticleLink" href="https://www.investopedia.com/terms/l/long-shortequity.asp">long-short equity strategy</a>, which involves maintaining a long position on equities
-      that are supposed to increase in price and maintaining a short position on equities that are supposed
-      to decrease in price. The equities are ranked by the average sentiment factor that we created. If the
-      average sentiment value associated with the corresponding equity was greater than 0, put it in the long
-      basket and if it was less than 0, put it in the short basket. The strategy then orders all the equities
-      in the long and short baskets one hour after the market opens each day, and is rebalanced every day. This
-      strategy works best with a very high starting capital and is market neutral so it could theoretically perform
-      well in any economic climate. The goal is to minimize exposure to the market.
+      I worked with a <a class="ArticleLink" href="https://www.investopedia.com/terms/l/long-shortequity.asp">long-short equity strategy</a>, which involved maintaining a long position on equities
+      that were supposed to increase in price and maintaining a short position on equities that were supposed
+      to decrease in price. The equities were then ranked by the average sentiment factor. If the
+      average sentiment value associated with the corresponding equity was greater than 0, it was put in the long
+      basket and if it was less than 0, it was put in the short basket. The strategy then ordered all the equities
+      in the long and short baskets one hour after the market opened each day, and was rebalanced every day. This
+      strategy worked best with a very high starting capital and is market neutral so it could perform
+      well in any economic climate. The goal was to minimize exposure to the market, while maximizing returns.
       </p>
       <h2 class="ArticleH2">Backtesting</h2>
       <p class="ArticleText">
-      After deciding on your alpha factor(s) and your trading strategy, it is time to convert it to the
-      actual trading algorithm and backtest it. We can take our custom factors <var>AverageSentiment</var>
-      and <var>AverageDailyDollarVolumeTraded</var> and use them directly in our algorithm, as well as our
-      pipeline we created in the research notebook. But what we haven't covered yet are the necessary functions
-      that Quantopian requires to place the market orders. In the <a class="ArticleLink" href="https://www.quantopian.com/help">Quantopian API</a>,
-      there are 3 functions that we need to use for our trading algorithm to work: <var>before trading start</var>, <var>handle_data</var>, and <var>rebalance</var>.
+      The last step was backtesting the trading algorithm. The custom factors <var>AverageSentiment</var>
+      and <var>AverageDailyDollarVolumeTraded</var> can be used directly in our algorithm, as well as the
+      Pipeline created in the research notebook. In the <a class="ArticleLink" href="https://www.quantopian.com/help">Quantopian API</a>,
+      there were 3 functions that were necessary for the trading algorithm to work: <var>before trading start</var>, <var>handle_data</var>, and <var>rebalance</var>.
       </p>
       <p class="ArticleText">
-      <var>Before_trading_start</var> is an optional method called once a day, before the market opens. Here, I deal with the NaN values, declare my
-      long and short positions, and rank the equities based on the average sentiment factor. Every day, this function is called and the positions are
+      <var>Before_trading_start</var> was an optional method called once a day, before the market opened. It was used to deal with the NaN values, declare
+      long and short positions, and rank the equities based on the average sentiment factor. Every day, this function was called and the positions were
       updated.
-      <var>Handle_data</var> is called every minute to get individual prices and windows of prices for one or more assets. You can also adjust your trading
-      algorithm's leverage, number of portfolio positions, and the number of open orders.
-      <var>Rebalance</var> is called every day 1 hour after the market opens and does the actual ordering of the equities. Here is the full trading algorithm:
+      <var>Handle_data</var> was called every minute to get individual prices and windows of prices for one or more assets.
+      An algorithm's leverage, number of portfolio positions, and the number of open orders can be adjusted.
+      <var>Rebalance</var> was called every day 1 hour after the market opened and placed the equity orders. Implementation for the full trading algorithm:
       </p>
-
       <pre>
       <code>
       from quantopian.algorithm import attach_pipeline, pipeline_output
@@ -310,9 +302,8 @@
       </code>
       </pre>
       <p class="ArticleText">
-      In the Quantopian IDE, choose to do a full backtest over the start and end dates you want (I chose roughly a 3 year window from 6/3/2014 to 10/25/2017 because the Sentdex dataset only goes back so far), which
-      took me roughly 45 minutes to complete. When you are done, head back to your research notebook to
-      analyze the backtest. To create an Alphalens tearsheet of it, do this (where the string is your backtest code):
+      A full backtest was completed from 6/3/2014 to 10/25/2017 because the Sentdex dataset only goes back so far.
+      When it finished, the backtest was analyzed with Alphalens in the research notebook (string is the backtest code).
       </p>
       <pre>
       <code>
@@ -321,29 +312,21 @@
       </code>
       </pre>
       <p class="ArticleText">
-      We first want to look at our trading algorithm's cummulative returns. The plot below shows the
-      cummulative returns of the strategy versus the Standard and Poor's 500 from June 3, 2014 to October 25, 2017. The first 2
+      The plot below showed the cummulative returns of the strategy versus the Standard and Poor's 500 from June 3, 2014 to October 25, 2017. The first 2
       years, the strategy outperformed the benchmark and ended up matching the benchmark's performance by the end of
       the backtest.
       </p>
       <img src="Assets/cummulative_returns.png" alt="Cummulative Returns">
       <p class="ImageText">Cummulative Returns of Trading Strategy vs. SPY</p>
       <p class="ArticleText">
-      While cummulative returns are great, it doesn't tell the full story of how the algorithm performed. The plot
-      below shows the rolling volatility (6 months) of the trading algorithm versus the SPY benchmark, as well as
-      the average volatility of trading algorithm. The trading strategy has a lower volatility than the benchmark and
+      Cummulative returns don't give the full story of a trading algorithm's performance. The plot
+      below showed the rolling volatility (6 months) of the trading algorithm versus the SPY benchmark, as well as
+      the average volatility of trading algorithm. The trading strategy had a lower volatility than the benchmark and
       greater returns up to the last few months of 2017.
       </p>
       <p class="ArticleQuote">"Volatility is a statistical measure of the disperion of returns for a given security or market index. Commonly, the higher the volatility, the riskier the security."</p>
       <p class="ArticleText">
-      If your trading algorithm doesn't perform as expected, look first at the trading frequency as well as the
-      initial portfolio allocation. Your algorithm might be designed to trade only once per day or even once per week, rather than
-      multiple times per day. If your broker you plan on putting orders through has a trading fee larger than the net gains on each trade,
-      inevitably you will lose your allocation. Also, another avenue to look into is how your strategy performs across different sectors.
-      Some markets might be more sensitive to sentiment through news articles and social media, like cryptocurrencies.
-      </p>
-      <p class="ArticleText">
-      That concludes the walkthrough! If you have any questions, feel free to send me an email.
+      If you have any questions, feel free to send me an email.
       </p>
       </div>
       <hr class="FooterHR">

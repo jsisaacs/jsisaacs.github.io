@@ -117,10 +117,6 @@ hr {
   font-weight: 200;
 }
 
-.PostEntrance {
-  color: #5680E9;
-}
-
 .FooterHR {
   border: 0;
   width: 100%;
@@ -245,6 +241,37 @@ pre > code {
   color: #5680E9;
   border: 1.75px solid #5680E9;
   background: 0 0
+}
+
+button {
+  float: center;
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.greyButton {
+
+  background-color: white;
+  color: #2B2826;
+  border: 2px solid #e7e7e7;
+}
+
+.greyButton:hover {
+  background-color: #e7e7e7;
+  border: 2px solid #e7e7e7;
+}
+
+.buttonCenter {
+  float: center;
 }
 
 img {
